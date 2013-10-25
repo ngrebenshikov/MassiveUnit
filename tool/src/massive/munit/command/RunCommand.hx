@@ -53,7 +53,7 @@ import haxe.ds.StringMap;
 #else
 private typedef StringMap<T> = Hash<T>
 #end
- 
+
 /**
 Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
 */
@@ -176,11 +176,11 @@ class RunCommand extends MUnitTargetCommandBase
 				if (type == TargetType.neko)
 				{
 					hasNekoTests = true;
-				}	
+				}
 				if (type == TargetType.cpp)
 				{
 					hasCPPTests = true;
-				}	
+				}
 			}
 			
 		}
@@ -588,10 +588,15 @@ class RunCommand extends MUnitTargetCommandBase
 			parameters.push("start");
 			if (browser != null)
 			{
-				if (browser.substr(0, 12) == "flashdevelop") 
+				if (browser.substr(0, 12) == "flashdevelop")
 				{
 					return sendFlashDevelopCommand(browser, "Browse", targetLocation);
 				}
+				else if (browser.substr(0, 9) == "phantomjs")
+				{
+					return Sys.command(browser, ['${console.originalDir.nativePath}resource\\run_phantom.js', targetLocation]);
+				}
+				
 				parameters.push(browser);
 			}
 		}
@@ -605,7 +610,7 @@ class RunCommand extends MUnitTargetCommandBase
 		{
 			if (browser != null)
 				parameters.push(browser);
-			else 
+			else
 				parameters.push("xdg-open");
 		}
 
@@ -615,11 +620,11 @@ class RunCommand extends MUnitTargetCommandBase
 		
 		if (exitCode > 0)
 			error("Error running " + targetLocation, exitCode);
-  
+
 		return exitCode;
 	}
 	
-	private function sendFlashDevelopCommand(args:String, cmd:String, data:String) 
+	private function sendFlashDevelopCommand(args:String, cmd:String, data:String)
 	{
 		var port = 1978;
 		var parts = args.split(':');
@@ -630,7 +635,7 @@ class RunCommand extends MUnitTargetCommandBase
 			conn.connect(new Host("localhost"), port);
 			conn.write('<flashconnect><message cmd="call" command="' + cmd + '">' + data + '</message></flashconnect>');
 			conn.output.writeByte(0);
-			conn.close(); 
+			conn.close();
 		}
 		catch (ex:Dynamic) {
 			print("ERROR: Failed to connect to FlashDevelop socket server");
@@ -645,7 +650,7 @@ class RunCommand extends MUnitTargetCommandBase
 		file.copyTo(reportRunnerFile);
 
 		FileSys.setCwd(config.dir.nativePath);
-  
+
 		var exitCode = runCommand("neko " + reportRunnerFile.nativePath);
 
 		FileSys.setCwd(console.originalDir.nativePath);
@@ -663,7 +668,7 @@ class RunCommand extends MUnitTargetCommandBase
 		file.copyTo(tmpFile);
 
 		FileSys.setCwd(config.dir.nativePath);
-  
+
 		var exitCode = runCommand(file.nativePath);
 
 		FileSys.setCwd(console.originalDir.nativePath);

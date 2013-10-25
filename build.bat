@@ -3,7 +3,7 @@ cd tool
 haxe build.hxml
 cd ../
 
-haxelib dev munit `pwd`/src
+haxelib dev munit ./src
 
 cd tool
 haxelib run munit test -coverage
