@@ -10,20 +10,32 @@
 			
 			function testComplete()
 			{
-				if (++i == MAX_TESTS)
-					BrowserTestsCompleteReporter.sendReport(shutdown, shutdown);
+				i++;
+				
+				if (typeof window.callPhantom === 'function') {
+					window.callPhantom({ action: 'testComplete', count:i, maxTests:MAX_TESTS });
+				}
+				
+				if (i === MAX_TESTS) {
+					BrowserTestsCompleteReporter.sendReport(shutdown, reportError);
+				}
+			}
+			
+			function reportError(){
+				console.log("reportError - problem sending reports");
+				shutdown();
 			}
 			
 			function shutdown()
 			{
-				::if killBrowser:: 
-					window.open('', '_self', ''); 
-					window.close(); 
-				::end::
-				
 				if (typeof window.callPhantom === 'function') {
 					window.callPhantom({ action: 'shutdown' });
-				}			
+				}
+				
+				::if killBrowser::
+					window.open('', '_self', '');
+					window.close();
+				::end::
 			}
 		</script>
 		
