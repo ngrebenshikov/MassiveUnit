@@ -2,12 +2,8 @@ if(typeof massive=='undefined') massive = {}
 if(!massive.munit) massive.munit = {}
 if(!massive.munit.js) massive.munit.js = {}
 
-
-
-
 var queue = [];
 var timer = null;
-
 
 var COLOR_PASSED = "#A9D1AC";
 var COLOR_FAILED = "#c82020";
@@ -19,7 +15,7 @@ var COLOR_DEFAULT = "white";
 * Pushes a javascript call into a deferred queue in order
 * to prevent additional unit testing from blocking
 */
-function addToQueue(scope, arg1, arg2, arg3, arg4)
+window.addToQueue = function(scope, arg1, arg2, arg3, arg4)
 {
 	var args = [];
 	if(arg4) args.unshift(arg4);
@@ -155,7 +151,7 @@ function munitPrint(value)
 	}
 	else
 	{
-		currentLine.innerHTML += value;	
+		currentLine.innerHTML += value;
 	}
 }
 
@@ -211,12 +207,12 @@ function updateTestSummary(value)
 }
 
 function addTestTrace(value)
-{	
+{
 	var contents = document.getElementById(currentClassId + "_contents");
 
 	var line = createDiv(null, "trace");
 	line.innerHTML = value;
-	contents.appendChild(line);	
+	contents.appendChild(line);
 }
 
 function addTestPass(value)
@@ -224,7 +220,7 @@ function addTestPass(value)
 	var contents = document.getElementById(currentClassId + "_contents");
 	var line = createDiv(null, "pass");
 	line.innerHTML = value;
-	contents.appendChild(line);	
+	contents.appendChild(line);
 }
 
 
@@ -233,7 +229,7 @@ function addTestFail(value)
 	var contents = document.getElementById(currentClassId + "_contents");
 	var line = createDiv(null, "fail");
 	line.innerHTML = value;
-	contents.appendChild(line);	
+	contents.appendChild(line);
 }
 
 function addTestError(value)
@@ -241,7 +237,7 @@ function addTestError(value)
 	var contents = document.getElementById(currentClassId + "_contents");
 	var line = createDiv(null, "error");
 	line.innerHTML = value;
-	contents.appendChild(line);	
+	contents.appendChild(line);
 }
 
 function addTestIgnore(value)
@@ -249,7 +245,7 @@ function addTestIgnore(value)
 	var contents = document.getElementById(currentClassId + "_contents");
 	var line = createDiv(null, "ignore");
 	line.innerHTML = value;
-	contents.appendChild(line);	
+	contents.appendChild(line);
 }
 
 function addTestCoverageClass(coverageClass, percentage)
@@ -273,7 +269,7 @@ function addTestCoverageItem(value)
 	var contents = document.getElementById(currentCoverageId + "_contents");
 	var line = createDiv(null, "coverage");
 	line.innerHTML = value;
-	contents.appendChild(line);	
+	contents.appendChild(line);
 }
 
 function setTestClassResult(level)
@@ -299,7 +295,7 @@ function setTestClassResult(level)
 			//color = COLOR_WARNING;// yellow passed but not covered
 			icon = "passed";
 			break;
-		default: 
+		default:
 			break;
 	}
 
@@ -480,7 +476,7 @@ function createDiv(id, clazz)
 }
 
 function createLineBreak()
-{ 
+{
 	var lb = document.createElement("hr");
 	//var lb = createDiv(null, "lineBreak");
 	//lb.innerHTML = "-----------------------------";
@@ -498,7 +494,7 @@ function createToggle(id)
 	headerParent.insertBefore(arrow, headerParent.firstChild.nextSibling);
 
 	var testContents = document.getElementById(id + "_contents");
-	testContents.style.display = "none";	
+	testContents.style.display = "none";
 }
 
 function removeToggle(id)
@@ -514,7 +510,7 @@ function removeToggle(id)
 	arrow.setAttribute("class", "arrow-none");
 
 	var testContents = document.getElementById(id + "_contents");
-	testContents.style.display = "none";	
+	testContents.style.display = "none";
 }
 
 function toggleVisibility(id, forceOpen)
@@ -522,7 +518,7 @@ function toggleVisibility(id, forceOpen)
 	var testContents = document.getElementById(id + "_contents");
 	if(forceOpen != true) forceOpen = testContents.style.display == "none";
 	
-	testContents.style.display = forceOpen ? "block" : "none";	
+	testContents.style.display = forceOpen ? "block" : "none";
 
 	var arrow = document.getElementById(id + "_header_arrow");
 	arrow.setAttribute("class", forceOpen ? "arrow-open" : "arrow-closed");

@@ -1,16 +1,16 @@
 /****
 * Copyright 2013 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,11 +20,13 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
 ****/
+
+
 
 package massive.munit.client;
 
@@ -119,12 +121,12 @@ class PrintClientBase extends AbstractTestResultClient
 	/////////  COVERAGE
 
 	override public function setCurrentTestClassCoverage(result:CoverageResult):Void
-	{	
+	{
 		super.setCurrentTestClassCoverage(result);
 		print(" [" + result.percent + "%]");
 
 		// if(result.percent == 100) return;
-		// printLine("COVERAGE: " + result.className, 1);	
+		// printLine("COVERAGE: " + result.className, 1);
 		// for(item in result.blocks)
 		// {
 		// 	var lines = item.split("\n");
@@ -148,7 +150,7 @@ class PrintClientBase extends AbstractTestResultClient
 		printLine(divider);
 
 		if(missingCoverageResults != null && missingCoverageResults.length >0)
-		{	
+		{
 			printLine("MISSING CODE BLOCKS:");
 			for(result in missingCoverageResults)
 			{
@@ -167,7 +169,7 @@ class PrintClientBase extends AbstractTestResultClient
 			printIndentedLines(executionFrequency, 1);
 		
 			printLine("");
-		}		
+		}
 
 		if(classBreakdown != null)
 		{
@@ -204,7 +206,7 @@ class PrintClientBase extends AbstractTestResultClient
 	{
 		if (!includeIgnoredReport || count == 0) return;
 
-		var items = Lambda.filter(totalResults, filterIngored); 
+		var items = Lambda.filter(totalResults, filterIngored);
 		
 		if(items.length == 0) return;
 
@@ -238,7 +240,7 @@ class PrintClientBase extends AbstractTestResultClient
 			+ " Time: " + MathUtil.round(time, 5);
 
 		printLine(resultString);
-		printLine("");	
+		printLine("");
 	}
 
 	override function printOverallResult(result:Bool)
@@ -342,12 +344,12 @@ class ExternalPrintClientJS implements ExternalPrintClient
 			var div = js.Lib.document.getElementById("haxe:trace");
 			#end
 				
-			if (div == null) 
+			if (div == null)
 			{
 				var positionInfo = ReflectUtil.here();
 				var error:String = "MissingElementException: 'haxe:trace' element not found at " + positionInfo.className + "#" + positionInfo.methodName + "(" + positionInfo.lineNumber + ")";
 				js.Lib.alert(error);
-			}	
+			}
 		#else
 
 		#end
@@ -390,19 +392,19 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 	public function setResult(value:Bool)
 	{
-		queue("setResult", value);	
+		queue("setResult", value);
 	}
 
 	public function setResultBackground(value:Bool)
 	{
-		queue("setResultBackground", value);	
+		queue("setResultBackground", value);
 	}
 
 	//RICH CLIENT APIs
 
 	public function trace(value:Dynamic)
 	{
-		queue("munitTrace", value);	
+		queue("munitTrace", value);
 	}
 
 	public function createTestClass(className:String)
@@ -502,7 +504,7 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 		var jsCode = convertToJavaScript(method, a);
 
-		#if js		
+		#if js
 			return js.Lib.eval(jsCode);
 		#elseif flash
 			externalInterfaceQueue.push(jsCode);
@@ -526,11 +528,11 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 		if(htmlArgs == null || htmlArgs.length == 0)
 		{
-			jsCode = "addToQueue(\"" + method + "\")";
+			jsCode = "window.addToQueue(\"" + method + "\")";
 		}
 		else
 		{
-			jsCode = "addToQueue(\"" + method + "\"";
+			jsCode = "window.addToQueue(\"" + method + "\"";
 
 			for(arg in htmlArgs)
 			{
