@@ -32,20 +32,13 @@ if (system.args.length == 1) {
 		var data = getData();
 		return data.count==data.total;
 	};
-	
-	
-	var waitForReport = function(){
-		console.log("[PhantomJS] Took more than 10 seconds to report results. Quitting");
-		phantom.exit(1);
-	};
-	
+		
 	var waitInterval=-1;
 	var waitForResults = function(){
 		if(testsComplete()){
 			clearInterval(waitInterval);
 			console.log("[PhantomJS] Tests complete!");
-			// wait for report... or time-out
-			setTimeout(waitForReport, 10000);
+			phantom.exit();
 		}
 	};
 	
