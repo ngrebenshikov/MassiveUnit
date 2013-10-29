@@ -4,7 +4,7 @@
 	<title>Massive Unit Test Runner</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<link rel="stylesheet" type="text/css" href="css/printclient.css" />
-		<script ltype="text/JavaScript" language="JavaScript" src="js/printclient.js"></script>
+		<script type="text/JavaScript" language="JavaScript" src="js/printclient.js"></script>
 		<style type="text/css">
 			html, body, div { margin:0; padding:0; font-family: monaco, Andale Mono, Courier New, monospace; font-size:12px;}
 			.output
@@ -17,6 +17,6 @@
 		<div id="haxe:trace" ></div>
 		<div id="munit" class="munit" >
 		</div>
-		<script language='JavaScript' type='text/JavaScript' src="::runnerName::"></script>
+		<script defer="defer" language='JavaScript' type='text/JavaScript' src="::runnerName::"></script>
 	</body>
 </html>
