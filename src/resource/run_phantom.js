@@ -7,7 +7,7 @@
 	system 	= require('system'),
 	url 	= system.args[1],
 	
-	logEverything=false,
+	logEverything=true,
 	
 	printArgs = function() {
 		var i, ilen;
@@ -35,7 +35,7 @@
 			console.log("[PhantomJS] Tests complete!");
 			setTimeout(function(){
 				phantom.exit();
-			}, 1000);
+			}, 5000);
 		}
 	},
 	
@@ -62,13 +62,11 @@
 			page.open(url, function(state){
 				
 				console.log("[PhantomJS] Page loaded");
-				
-				console.log(page.content);
+				//console.log(page.content);
 				
 				if(state == "success"){
 					if(checkTestsComplete()){
 						console.log("[PhantomJS] Tests already completed on page-load!");
-						
 						setTimeout(function(){
 							phantom.exit();
 						}, 1000);
@@ -184,9 +182,9 @@
 	};
 	
 	setTimeout(function(){
-		console.log("[PhantomJS] Took more than 2 minutes. Quitting");
+		console.log("[PhantomJS] Took more than 30 seconds. Quitting");
 		phantom.exit(1);
-	}, 120000);
+	}, 30000);
 	
 	setupPageCallbacks(page);
 	
