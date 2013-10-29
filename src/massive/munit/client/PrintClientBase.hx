@@ -28,6 +28,8 @@
 
 
 
+
+
 package massive.munit.client;
 
 import massive.munit.AssertionException;
@@ -528,11 +530,11 @@ class ExternalPrintClientJS implements ExternalPrintClient
 
 		if(htmlArgs == null || htmlArgs.length == 0)
 		{
-			jsCode = "window.addToQueue(\"" + method + "\")";
+			jsCode = "addToQueue(\"" + method + "\")";
 		}
 		else
 		{
-			jsCode = "window.addToQueue(\"" + method + "\"";
+			jsCode = "addToQueue(\"" + method + "\"";
 
 			for(arg in htmlArgs)
 			{
