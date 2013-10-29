@@ -5,25 +5,20 @@
 		<title>Massive Unit Test Runner</title>
 		<script language='JavaScript' type='text/JavaScript' src="tests-complete.js"></script>
 		<script language='JavaScript' type='text/JavaScript'>
-			var MAX_TESTS = ::testCount::;
-			var i = 0;
+			MAX_TESTS = ::testCount::;
+			TESTS_COMPLETE = 0;
 			
 			function testComplete()
 			{
-				i++;
+				TESTS_COMPLETE++;
 				
 				if (typeof window.callPhantom === 'function') {
-					window.callPhantom({ action: 'testComplete', count:i, maxTests:MAX_TESTS });
+					window.callPhantom({ action: 'testComplete', count:TESTS_COMPLETE, maxTests:MAX_TESTS });
 				}
-				
-				if (i === MAX_TESTS) {
-					BrowserTestsCompleteReporter.sendReport(shutdown, reportError);
-				}
-			}
 			
-			function reportError(){
-				console.log("reportError - problem sending reports");
-				shutdown();
+				if (TESTS_COMPLETE === MAX_TESTS) {
+					BrowserTestsCompleteReporter.sendReport(shutdown, shutdown);
+				}
 			}
 			
 			function shutdown()
