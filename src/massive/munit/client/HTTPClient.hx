@@ -29,9 +29,14 @@
 package massive.munit.client;
 
 import haxe.Http;
+
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
 import massive.munit.util.Timer;
+
+#if (neko||cpp||php)
+import sys.net.Host;
+#end
 
 #if haxe3
 import haxe.ds.StringMap;
@@ -41,12 +46,29 @@ private typedef StringMap<T> = Hash<T>
 
 /**
  * Decorates other ITestResultClient's, adding behavior to post test results to a specified url.
- * 
+ *
  * @author Mike Stead
  */
 class HTTPClient implements IAdvancedTestResultClient
 {
-	@:extern public inline static var DEFAULT_SERVER_URL:String = "http://localhost:2000";
+	static var hostStr:String;
+	public static var DEFAULT_SERVER_URL(get_DEFAULT_SERVER_URL, never):String; // http://localhost:2000";
+	private static function get_DEFAULT_SERVER_URL() {
+		if (hostStr == null) {
+			#if js
+			hostStr = js.Browser.location.host;
+			#elseif (flash || flash9)
+			hostStr = flash.external.ExternalInterface.call('function(){ return top.location.host; }');
+			#else
+			hostStr = '${new Host(Host.localhost()).toString()}:2000';
+			#end
+			
+			hostStr = "http://" + hostStr;
+		}
+		
+		return hostStr;
+	}
+	
 	/**
 	 * Default id of this client.
 	 */
@@ -72,7 +94,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	public var id(default, null):String;
 
 	/**
-	 * Handler which if present, is called when the client has completed sending the test results to the specificied url. 
+	 * Handler which if present, is called when the client has completed sending the test results to the specificied url.
 	 * This will be called once an HTTP response has been recieved.
 	 */
 	@:isVar
@@ -81,7 +103,7 @@ class HTTPClient implements IAdvancedTestResultClient
 	#else
 	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
 	#end
-	private function get_completionHandler():ITestResultClient -> Void 
+	private function get_completionHandler():ITestResultClient -> Void
 	{
 		return completionHandler;
 	}
@@ -96,17 +118,17 @@ class HTTPClient implements IAdvancedTestResultClient
 	private var queueRequest:Bool;
 
 	/**
-	 * 
+	 *
 	 * @param	client				the test result client to decorate
 	 * @param	url					the url to send test results to
 	 * @param	?queueRequest		[optional] whether to add http requests to a global queue. Default is true.
 	 * @param	?httpRequest		[optional] a custom http request to use to dispatch the result.
 	 */
-	public function new(client:ITestResultClient, ?url:String = DEFAULT_SERVER_URL, ?queueRequest:Bool = true) 
+	public function new(client:ITestResultClient, ?url:String = null, ?queueRequest:Bool = true)
 	{
 		id = DEFAULT_ID;
 		this.client = client;
-		this.url = url;
+		this.url = (url == null) ? DEFAULT_SERVER_URL : url;
 		this.queueRequest = queueRequest;
 	}
 
@@ -125,7 +147,7 @@ class HTTPClient implements IAdvancedTestResultClient
 
 	/**
 	 * Called when a test passes.
-	 *  
+	 *
 	 * @param	result			a passed test result
 	 */
 	public function addPass(result:TestResult):Void
@@ -135,7 +157,7 @@ class HTTPClient implements IAdvancedTestResultClient
 
 	/**
 	 * Called when a test fails.
-	 *  
+	 *
 	 * @param	result			a failed test result
 	 */
 	public function addFail(result:TestResult):Void
@@ -145,7 +167,7 @@ class HTTPClient implements IAdvancedTestResultClient
 
 	/**
 	 * Called when a test triggers an unexpected exception.
-	 *  
+	 *
 	 * @param	result			an erroneous test result
 	 */
 	public function addError(result:TestResult):Void
@@ -160,12 +182,12 @@ class HTTPClient implements IAdvancedTestResultClient
 	 */
 	public function addIgnore(result:TestResult):Void
 	{
-		client.addIgnore(result);	
+		client.addIgnore(result);
 	}
 
 	/**
 	 * Called when all tests are complete.
-	 *  
+	 *
 	 * @param	testCount		total number of tests run
 	 * @param	passCount		total number of tests which passed
 	 * @param	failCount		total number of tests which failed
@@ -195,7 +217,7 @@ class HTTPClient implements IAdvancedTestResultClient
 			queue.unshift(request);
 			dispatchNextRequest();
 		}
-		else 
+		else
 		{
 			request.send();
 		}
@@ -221,7 +243,7 @@ class HTTPClient implements IAdvancedTestResultClient
 			dispatchNextRequest();
 		}
 		if (completionHandler != null)
-			completionHandler(this); 
+			completionHandler(this);
 	}
 
 	private function onError(msg:String):Void
@@ -231,13 +253,13 @@ class HTTPClient implements IAdvancedTestResultClient
 			responsePending = false;
 			dispatchNextRequest();
 		}
-		if (completionHandler != null) 
-			completionHandler(this); 
+		if (completionHandler != null)
+			completionHandler(this);
 	}
 
 	private static function dispatchNextRequest():Void
 	{
-		if (responsePending || queue.length == 0) 
+		if (responsePending || queue.length == 0)
 			return;
 		
 		responsePending = true;
@@ -280,9 +302,9 @@ class URLRequest
 			client = new Http(url);
 		#elseif flash9
 			client = new flash.net.URLRequest(url);
-		#elseif flash			
+		#elseif flash
 			client = new flash.LoadVars();
-		#end		
+		#end
 	}
 
 	public function setHeader(name:String, value:String)
@@ -321,11 +343,11 @@ class URLRequest
 
 			client.data = data;
 			client.sendAndLoad(url, result, "POST");
-		#end		
+		#end
 	}
 
 	#if flash9
-		function internalOnData(event:flash.events.Event) 
+		function internalOnData(event:flash.events.Event)
 		{
 			onData(event.target.data);
 		}

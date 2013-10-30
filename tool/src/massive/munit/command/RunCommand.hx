@@ -96,7 +96,7 @@ class RunCommand extends MUnitTargetCommandBase
 	{
 		super();
 		killBrowser = false;
-
+		
 		// TODO: Configure this through args to munit for CI. ms 4/8/11
 		serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
 	}
@@ -104,7 +104,8 @@ class RunCommand extends MUnitTargetCommandBase
 	override public function initialise():Void
 	{
 		initialiseTargets(false);
-
+		
+		getMachineIP();
 		locateBinDir();
 		gatherTestRunnerFiles();
 		locateReportDir();
@@ -114,7 +115,17 @@ class RunCommand extends MUnitTargetCommandBase
 		generateTestRunnerPages();
 		checkForExitOnFail();
 	}
-
+	
+	
+	/**
+	 * resolve the local ip - eg. - 192.168.0.1
+	 * not just localhost / 127.0.0.1
+	 */
+	function getMachineIP() {
+		machineIP = new Host(Host.localhost()).toString();
+	}
+	
+	
 	function locateBinDir()
 	{
 		var binPath:String = console.getNextArg();
@@ -374,16 +385,16 @@ class RunCommand extends MUnitTargetCommandBase
 
 		if (tmpDir.exists)
 			tmpDir.deleteDirectoryContents(RegExpUtil.SVN_REGEX, true);
-
+		
 		tmpRunnerDir = tmpDir.resolveDirectory("runner");
 		reportRunnerDir.copyTo(tmpRunnerDir);
-
+		
 
 		var serverProcess:Process = null;
-
+		
 		try
 		{
-			serverProcess = new Process("nekotools", ["server"]);
+			serverProcess = new Process("nekotools", ["server", "-h", machineIP]); //TODO: make port configurable... maybe?
 		}
 		catch(e:Dynamic)
 		{
@@ -579,9 +590,9 @@ class RunCommand extends MUnitTargetCommandBase
 
 	private function launchFile(file:File):Int
 	{
-		var targetLocation:String  = HTTPClient.DEFAULT_SERVER_URL + "/tmp/runner/" + file.fileName;
-		var parameters:Array<String> = [];
-
+		var targetLocation	:String  = HTTPClient.DEFAULT_SERVER_URL + "/tmp/runner/" + file.fileName;
+		var parameters		:Array<String> = [];
+			
 		// See http://www.dwheeler.com/essays/open-files-urls.html
 		if (FileSys.isWindows)
 		{
@@ -632,7 +643,7 @@ class RunCommand extends MUnitTargetCommandBase
 		
 		try {
 			var conn = new Socket();
-			conn.connect(new Host("localhost"), port);
+			conn.connect(new Host(machineIP), port);
 			conn.write('<flashconnect><message cmd="call" command="' + cmd + '">' + data + '</message></flashconnect>');
 			conn.output.writeByte(0);
 			conn.close();
