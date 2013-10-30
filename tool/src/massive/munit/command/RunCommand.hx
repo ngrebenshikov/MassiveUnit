@@ -86,12 +86,13 @@ class RunCommand extends MUnitTargetCommandBase
 
 	var nekoFile:File;
 	var cppFile:File;
-	
-	
+		
 	var serverTimeoutTimeSec:Int;
 
 	var resultExitCode:Bool;
 
+	var machineIP:String;
+	
 	public function new():Void
 	{
 		super();

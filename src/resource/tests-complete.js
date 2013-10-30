@@ -13,7 +13,7 @@ BrowserTestsCompleteReporter.__name__ = true;
 BrowserTestsCompleteReporter.main = function() {
 }
 BrowserTestsCompleteReporter.sendReport = function(onData,onError) {
-	var httpRequest = new haxe.Http("http://localhost:2000");
+	var httpRequest = new haxe.Http(massive.munit.client.HTTPClient.get_DEFAULT_SERVER_URL());
 	httpRequest.setHeader("munit-clientId","munit-tool-host");
 	httpRequest.setHeader("munit-platformId","-");
 	httpRequest.setParameter("data","COMPLETE");
@@ -280,7 +280,7 @@ massive.haxe = {}
 massive.haxe.Exception = function(message,info) {
 	this.message = message;
 	this.info = info;
-	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "Exception.hx", lineNumber : 72, className : "massive.haxe.Exception", methodName : "new"}).className;
+	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "Exception.hx", lineNumber : 70, className : "massive.haxe.Exception", methodName : "new"}).className;
 };
 massive.haxe.Exception.__name__ = true;
 massive.haxe.Exception.prototype = {
@@ -377,14 +377,20 @@ massive.munit.TestResultType.IGNORE.__enum__ = massive.munit.TestResultType;
 massive.munit.client = {}
 massive.munit.client.HTTPClient = function(client,url,queueRequest) {
 	if(queueRequest == null) queueRequest = true;
-	if(url == null) url = "http://localhost:2000";
 	this.id = "HTTPClient";
 	this.client = client;
-	this.url = url;
+	this.url = url == null?massive.munit.client.HTTPClient.get_DEFAULT_SERVER_URL():url;
 	this.queueRequest = queueRequest;
 };
 massive.munit.client.HTTPClient.__name__ = true;
 massive.munit.client.HTTPClient.__interfaces__ = [massive.munit.IAdvancedTestResultClient];
+massive.munit.client.HTTPClient.get_DEFAULT_SERVER_URL = function() {
+	if(massive.munit.client.HTTPClient.hostStr == null) {
+		massive.munit.client.HTTPClient.hostStr = js.Browser.location.host;
+		massive.munit.client.HTTPClient.hostStr = "http://" + massive.munit.client.HTTPClient.hostStr;
+	}
+	return massive.munit.client.HTTPClient.hostStr;
+}
 massive.munit.client.HTTPClient.dispatchNextRequest = function() {
 	if(massive.munit.client.HTTPClient.responsePending || massive.munit.client.HTTPClient.queue.length == 0) return;
 	massive.munit.client.HTTPClient.responsePending = true;
@@ -523,6 +529,7 @@ Bool.__ename__ = ["Bool"];
 var Class = { __name__ : ["Class"]};
 var Enum = { };
 BrowserTestsCompleteReporter.CLIENT_RUNNER_HOST = "munit-tool-host";
+js.Browser.location = typeof window != "undefined" ? window.location : null;
 massive.munit.client.HTTPClient.queue = [];
 massive.munit.client.HTTPClient.responsePending = false;
 massive.munit.util.Timer.arr = new Array();
