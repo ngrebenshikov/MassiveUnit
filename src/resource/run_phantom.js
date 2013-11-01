@@ -19,7 +19,7 @@
 	system 	= require('system'),
 	url 	= system.args[1],
 	
-	logEverything=true,
+	logEverything=false,
 	
 	printArgs = function() {
 		var i, ilen;
