@@ -596,7 +596,7 @@ class RunCommand extends MUnitTargetCommandBase
 		
 		if (browser.substr(0, 9) == "phantomjs")
 		{
-			return Sys.command(browser, ['${console.originalDir.nativePath}resource\\run_phantom.js', targetLocation]);
+			return Sys.command(browser, ['${console.originalDir.nativePath}resource/run_phantom.js', targetLocation]);
 		}
 		
 		// See http://www.dwheeler.com/essays/open-files-urls.html
