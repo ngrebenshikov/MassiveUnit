@@ -419,9 +419,15 @@ class RunCommand extends MUnitTargetCommandBase
 		else
 			resultMonitor.sendMessage("quit");
 
+		trace('started');
+		
 		var platformResults:Bool = Thread.readMessage(true);
 
+		trace(platformResults);
+
 		serverProcess.kill();
+
+		trace('killed');
 
 		if (reportTestDir.exists)
 			reportTestDir.deleteDirectoryContents();
@@ -571,7 +577,12 @@ class RunCommand extends MUnitTargetCommandBase
 		
 		var platformResult:Bool = platformCount > 0 && testFailCount == 0 && testErrorCount == 0 && !serverHung;
 
+		trace(platformResult);
+		print(platformResult);
+
 		mainThread.sendMessage(platformResult);
+
+		trace('sent');
 	}
 
 	private function getTargetName(result:String):String
@@ -629,11 +640,21 @@ class RunCommand extends MUnitTargetCommandBase
 
 		parameters.push(targetLocation);
 
+		if (FileSys.isLinux)
+		{
+			parameters.push(" &");
+		}
+
+		trace(parameters.join(" "));
+
 		var exitCode:Int = Sys.command(parameters.join(" "));
 		
+		trace(exitCode);
+
 		if (exitCode > 0)
 			error("Error running " + targetLocation, exitCode);
 
+		trace("after error");
 		return exitCode;
 	}
 	
